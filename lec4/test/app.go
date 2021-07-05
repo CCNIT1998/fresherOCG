@@ -1,18 +1,18 @@
 package main
 
 import (
-	"database/sql"
+	"io/ioutil"
+	"net/http"
 	"fmt"
-
-	_ "github.com/go-sql-driver/mysql"
+	"regexp"
 )
 
 func main() {
-	db, err := sql.Open("mysql", "user:password@tcp(localhost:3306)/tfs")
-	if err != nil {
-		fmt.Println("C1")
-		panic(err)
-	}
-	fmt.Println("Connect success")
-	defer db.Close()
+	url := "https://template-homedecor.onshopbase.com/collections/new-arrivals?sortby=name%3Aasc"
+	resp, _ := http.Get(url)
+	b, _ := ioutil.ReadAll(resp.Body)
+	// regexpn := regexp.MustCompile(`<a.*?href="/collections/(.*?)</a>`)
+	regexpn := regexp.MustCompile(`<a\shref="/collections(.*)</a>`)
+	moviename := regexpn.FindAllStringSubmatch(string(b), -1)
+	fmt.Println(moviename)
 }
